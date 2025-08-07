@@ -4,38 +4,168 @@
   <meta charset="UTF-8" />
   <title>Калькулятор смещения нулевой точки</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; }
-    label { display: block; margin-top: 10px; }
-    input { width: 100%; padding: 5px; font-size: 1em; }
-    button { margin-top: 15px; padding: 10px; font-size: 1em; }
-    .result { margin-top: 15px; font-weight: bold; }
+    /* ======= Общие настройки шрифтов и фона ======= */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background-color: #f2f2f7; /* Мягкий светло-серый фон в стиле iOS */
+      color: #1c1c1e; /* Тёмно-серый цвет текста */
+      margin: 0;
+      padding: 30px 20px;
+      display: flex;
+      justify-content: center; /* Центрируем контейнер по горизонтали */
+      align-items: flex-start; /* Выровнять по верхнему краю */
+      min-height: 100vh;
+    }
+
+    /* ======= Контейнер с белым фоном, тенью и скруглениями ======= */
+    .container {
+      background: #ffffff;
+      padding: 30px 25px;
+      border-radius: 20px; /* Крупные скругления углов */
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); /* Лёгкая тень */
+      width: 100%;
+      max-width: 440px; /* Максимальная ширина */
+      box-sizing: border-box;
+    }
+
+    /* ======= Заголовок ======= */
+    h2 {
+      font-weight: 600;
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      letter-spacing: -0.02em;
+    }
+
+    /* ======= Надписи (labels) ======= */
+    label {
+      display: block; /* Перенос на новую строку */
+      margin-bottom: 6px; /* Отступ снизу — чтобы подпись была ближе к полю ввода */
+      font-weight: 500;
+      font-size: 1rem;
+      color: #3a3a3c; /* Немного светлее основного текста */
+    }
+
+    /* ======= Поля ввода ======= */
+    input[type="number"] {
+      width: 100%; /* Занимает всю ширину контейнера */
+      padding: 12px 15px; /* Внутренние отступы */
+      font-size: 1rem;
+      border-radius: 12px; /* Скруглённые углы */
+      border: 1.5px solid #d1d1d6; /* Светлая рамка */
+      background-color: #fafafa; /* Очень светлый фон поля */
+      transition: border-color 0.3s ease;
+      color: #1c1c1e;
+      box-sizing: border-box;
+      font-weight: 400;
+      margin-bottom: 18px; /* Отступ снизу — разделяет поля */
+      -webkit-appearance: none; /* Убираем стрелки в Chrome */
+      -moz-appearance: textfield; /* Убираем стрелки в Firefox */
+    }
+
+    /* Стили при фокусе на поле */
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #007aff; /* Яркий синий цвет рамки */
+      background-color: #fff; /* Белый фон */
+      box-shadow: 0 0 8px rgba(0, 122, 255, 0.3); /* Синяя тень */
+    }
+
+    /* ======= Убираем стрелки у number input в Chrome и Firefox ======= */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none;
+      margin: 0; 
+    }
+
+    /* ======= Кнопка ======= */
+    button {
+      margin-top: 25px; /* Отступ сверху, чтобы не прилепала к полю */
+      width: 100%; /* Кнопка во всю ширину */
+      background: linear-gradient(135deg, #0a84ff, #0066ff); /* Градиент iOS-синего */
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 14px 0;
+      border-radius: 18px; /* Скругления */
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(10, 132, 255, 0.4);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      user-select: none; /* Запрет выделения текста кнопки */
+    }
+
+    /* Ховер эффект кнопки */
+    button:hover {
+      background: linear-gradient(135deg, #0066ff, #0051cc);
+      box-shadow: 0 8px 18px rgba(0, 102, 255, 0.6);
+    }
+
+    /* Активное нажатие кнопки */
+    button:active {
+      background: linear-gradient(135deg, #0051cc, #0040a6);
+      box-shadow: 0 4px 8px rgba(0, 51, 153, 0.8);
+    }
+
+    /* ======= Результат ======= */
+    .result {
+      margin-top: 25px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #2c2c2e;
+      min-height: 44px; /* Чтобы место под результат было всегда */
+      letter-spacing: 0.01em;
+      white-space: pre-line; /* Поддержка перевода строки */
+    }
   </style>
 </head>
 <body>
-  <h2>Смещение нулевой точки</h2>
-  <label>Вылет до цанги (мм):
-    <input type="number" id="l1" value="52.5" step="0.01">
-  </label>
-  <label>Вылет инструмента (мм):
-    <input type="number" id="l2" value="52" step="0.01">
-  </label>
-  <label>Угол наклона (градусы):
-    <input type="number" id="angle" value="10" step="0.01">
-  </label>
-  <button onclick="calculate()">Рассчитать</button>
-  <div class="result" id="output"></div>
+  <div class="container">
+    <h2>Смещение точек X/Y от центра вращения</h2>
+
+    <!-- Ввод вылета до цанги -->
+    <label for="l1">Вылет до цанги (мм):</label>
+    <input type="number" id="l1" value="52.5" step="0.01" />
+
+    <!-- Ввод вылета инструмента -->
+    <label for="l2">Вылет инструмента (мм):</label>
+    <input type="number" id="l2" value="52" step="0.01" />
+
+    <!-- Ввод угла наклона -->
+    <label for="angle">Угол наклона (градусы):</label>
+    <input type="number" id="angle" value="10" step="0.01" />
+
+    <!-- Кнопка расчёта -->
+    <button onclick="calculate()">Рассчитать</button>
+
+    <!-- Вывод результата -->
+    <div class="result" id="output"></div>
+  </div>
 
   <script>
     function calculate() {
-      let l1 = parseFloat(document.getElementById('l1').value);
-      let l2 = parseFloat(document.getElementById('l2').value);
-      let angleDeg = parseFloat(document.getElementById('angle').value);
-      let angleRad = angleDeg * Math.PI / 180;
-      let L = l1 + l2;
-      let deltaX = L * Math.sin(angleRad);
-      let deltaZ = L * (1 - Math.cos(angleRad));
-      document.getElementById('output').innerHTML =
-        `ΔX = ${deltaX.toFixed(3)} мм<br>ΔZ = ${deltaZ.toFixed(3)} мм`;
+      // Получаем значения из полей и преобразуем в числа
+      const l1 = parseFloat(document.getElementById('l1').value);
+      const l2 = parseFloat(document.getElementById('l2').value);
+      const angleDeg = parseFloat(document.getElementById('angle').value);
+
+      // Проверка, что все введены корректно
+      if (isNaN(l1) || isNaN(l2) || isNaN(angleDeg)) {
+        document.getElementById('output').textContent = 'Пожалуйста, введите корректные числа во все поля.';
+        return;
+      }
+
+      // Перевод градусов в радианы
+      const angleRad = angleDeg * Math.PI / 180;
+      const L = l1 + l2;
+
+      // Формулы расчёта
+      const deltaX = L * Math.sin(angleRad);
+      const deltaZ = L * (1 - Math.cos(angleRad));
+
+      // Вывод результата с тремя знаками после запятой
+      document.getElementById('output').textContent =
+        `ΔX = ${deltaX.toFixed(3)} мм\nΔZ = ${deltaZ.toFixed(3)} мм`;
     }
   </script>
 </body>
