@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Калькулятор смещения нулевой точки</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    label { display: block; margin-top: 10px; }
+    input { width: 100%; padding: 5px; font-size: 1em; }
+    button { margin-top: 15px; padding: 10px; font-size: 1em; }
+    .result { margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Смещение нулевой точки</h2>
+  <label>Вылет до цанги (мм):
+    <input type="number" id="l1" value="52.5" step="0.01">
+  </label>
+  <label>Вылет инструмента (мм):
+    <input type="number" id="l2" value="52" step="0.01">
+  </label>
+  <label>Угол наклона (градусы):
+    <input type="number" id="angle" value="10" step="0.01">
+  </label>
+  <button onclick="calculate()">Рассчитать</button>
+  <div class="result" id="output"></div>
+
+  <script>
+    function calculate() {
+      let l1 = parseFloat(document.getElementById('l1').value);
+      let l2 = parseFloat(document.getElementById('l2').value);
+      let angleDeg = parseFloat(document.getElementById('angle').value);
+      let angleRad = angleDeg * Math.PI / 180;
+      let L = l1 + l2;
+      let deltaX = L * Math.sin(angleRad);
+      let deltaZ = L * (1 - Math.cos(angleRad));
+      document.getElementById('output').innerHTML =
+        `ΔX = ${deltaX.toFixed(3)} мм<br>ΔZ = ${deltaZ.toFixed(3)} мм`;
+    }
+  </script>
+</body>
+</html>
